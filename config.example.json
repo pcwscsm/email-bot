@@ -1,0 +1,104 @@
+{
+  "_comment_top": "复制此文件到 %USERPROFILE%/EmailBot/config.json 并填入真实凭证。所有 _comment* 字段会被忽略，仅作说明用。任何 'xxxxx' / 'your_xxx' 占位符必须替换。",
+
+  "accounts": [
+    {
+      "_comment":     "QQ 邮箱示例。需要登录 QQ 邮箱→设置→账户→开启 IMAP 服务，然后生成 16 位授权码（不是 QQ 密码）",
+      "name":         "QQ",
+      "host":         "imap.qq.com",
+      "port":         993,
+      "user":         "your_qq@qq.com",
+      "password":     "16_digit_authcode_here",
+      "webmail_url":  "https://mail.qq.com/",
+      "folders":      ["INBOX"],
+      "initial_mode": "recent24h"
+    },
+    {
+      "_comment":     "Gmail 示例。需要在 Google 账户设置中开启两步验证，然后生成应用专用密码（16 位）",
+      "name":         "Gmail",
+      "host":         "imap.gmail.com",
+      "port":         993,
+      "user":         "your_gmail@gmail.com",
+      "password":     "16_digit_app_password",
+      "webmail_url":  "https://mail.google.com/",
+      "folders":      ["INBOX"],
+      "initial_mode": "recent24h"
+    },
+    {
+      "_comment":     "学校邮箱示例（北交大 Coremail）。BJTU 邮箱建议用 unseen 模式：第一次跑会拉取所有未读邮件，之后只拉新邮件",
+      "name":         "BJTU",
+      "host":         "mail.bjtu.edu.cn",
+      "port":         993,
+      "user":         "your_account@bjtu.edu.cn",
+      "password":     "your_email_password",
+      "webmail_url":  "https://mail.bjtu.edu.cn/",
+      "folders":      ["INBOX"],
+      "initial_mode": "unseen"
+    }
+  ],
+
+  "_comment_websites": "HTML 爬虫源。如果暂不需要，保持空数组 []。需要 pip install beautifulsoup4 才会启用",
+  "websites": [],
+
+  "_comment_websites_example": {
+    "_comment":         "下面是一个完整的 HTML 爬虫源配置示例（不会被实际加载，仅供参考）。要使用时把它从 _comment_websites_example 移到 websites 数组里，并把 _comment 字段去掉",
+    "name":             "示例学院通知",
+    "list_url":         "http://example.bjtu.edu.cn/notices/",
+    "list_selector":    "ul.list > li",
+    "title_selector":   "a",
+    "url_attr":         "href",
+    "date_selector":    ".date",
+    "date_regex":       "(20\\d{2}[-./]\\d{1,2}[-./]\\d{1,2})",
+    "detail_selector":  ".content",
+    "fetch_detail":     true,
+    "max_per_run":      5,
+    "max_body_chars":   1500,
+    "timeout":          15,
+    "route":            "mail"
+  },
+
+  "_comment_jsonapi": "JSON API 源。当前内置两种类型：bjtu_internship（实习信息）、bjtu_fair（宣讲会/双选会）",
+
+  "jsonapi_sources": [
+    {
+      "_comment":          "BJTU 实习信息。第一次跑时 first_run_preview=3 会推送 3 条作为效果预览；想完全静默改为 0",
+      "name":              "BJTU实习",
+      "type":              "bjtu_internship",
+      "max_per_run":       8,
+      "first_run_preview": 3,
+      "fetch_count":       30,
+      "skip_cities":       [],
+      "skip_natures":      [],
+      "route":             "mail",
+      "_comment_filters":  "skip_cities 是字符串列表，例如 ['乌鲁木齐', '拉萨']。任何 cityName 包含这些字串的记录会被过滤。skip_natures 是公司性质完全匹配，例如 ['国有企业']"
+    },
+    {
+      "_comment":          "BJTU 宣讲会。max_forward_days=30 表示只推送 30 天内的；过期的（forwardDay<0）和过远的（forwardDay>30）自动过滤",
+      "name":              "BJTU宣讲会",
+      "type":              "bjtu_fair",
+      "max_per_run":       8,
+      "first_run_preview": 3,
+      "fetch_count":       50,
+      "max_forward_days":  30,
+      "route":             "mail"
+    }
+  ],
+
+  "llm": {
+    "_comment":          "DashScope（阿里云通义千问）API。注册获取免费额度：https://dashscope.aliyun.com。可换用兼容 OpenAI 格式的其他服务，但需要相应修改代码中的 endpoint",
+    "dashscope_api_key": "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "model":             "qwen-turbo"
+  },
+
+  "feishu": {
+    "_comment": "飞书自定义机器人 webhook。在飞书群中：群设置 → 群机器人 → 添加机器人 → 自定义机器人 → 复制 Webhook 地址。注意：新建机器人默认开启『自定义关键词』安全设置，需要关掉，或将关键词设为本程序卡片标题里出现的字（如 '邮件' '通知' '速递'）",
+    "webhook":  "https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  },
+
+  "filters": {
+    "_comment":            "全局过滤规则。skip_low_importance=true 会丢弃 LLM 评级为'低'的所有条目（推荐）。skip_senders 中的发件人邮箱会被直接跳过（不进入 LLM）。max_per_run 是单次运行的全局上限，防止某次拉到一大堆邮件时把飞书群刷屏",
+    "skip_low_importance": true,
+    "skip_senders":        ["noreply@example.com", "do-not-reply@example.com"],
+    "max_per_run":         20
+  }
+}

@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual env
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# THIS PROJECT — DO NOT COMMIT
+config.json
+state.json
+state.json.bak
+state.json.*.bak
+bot.log
+*.log
+
+# User data directory shouldn't ever land here, but just in case
+EmailBot/
